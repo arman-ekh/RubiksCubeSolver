@@ -41,14 +41,44 @@ struct Cube {
     }
 
     void U() {
+        //move Edges
         move_index(3,0 , &Edges);
         move_index(3,2 , &Edges);
         move_index(2,1 , &Edges);
 
 
         //move corners
+        //TODO
     }
 
+    void D() {
+        //move Edges
+        move_index(11,8,&Edges);
+        move_index(11,9,&Edges);
+        move_index(11,10,&Edges);
+
+        //move corners
+        //TODO
+    }
+
+    void R() {
+        //move Edges
+        move_index(6,3,&Edges);
+        move_index(11,3,&Edges);
+        move_index(7,3,&Edges);
+
+        //move corners
+        //TODO
+    }
+
+    void L() {
+        move_index(1,4,&Edges);
+        move_index(1,9,&Edges);
+        move_index(1,5,&Edges);
+
+        //move corners
+        //TODO
+    }
 };
 
 
@@ -66,16 +96,9 @@ int main() {
     //
 
     Cube cube = Cube(EdgesSolved, CornersSolved);
-    cube.U();
-    std::cout << std::bitset<20>(cube.Edges) << std::endl;
-    cube.U();
-    std::cout << std::bitset<20>(cube.Edges) << std::endl;
-    cube.U();
-    std::cout << std::bitset<20>(cube.Edges) << std::endl;
-    cube.U();
-    std::cout << std::bitset<20>(cube.Edges) << std::endl;
-    cube.U();
-    std::cout << std::bitset<20>(cube.Edges) << std::endl;
+    cube.R();
+    std::cout << std::bitset<60>(cube.Edges) << std::endl;
+
 
     return 0;
 }
