@@ -72,9 +72,30 @@ struct Cube {
     }
 
     void L() {
+        //move Edges
         move_index(1,4,&Edges);
         move_index(1,9,&Edges);
         move_index(1,5,&Edges);
+
+        //move corners
+        //TODO
+    }
+
+    void F() {
+        //move Edges
+        move_index(0,7,&Edges);
+        move_index(0,8,&Edges);
+        move_index(0,4,&Edges);
+
+        //move corners
+        //TODO
+    }
+
+    void B() {
+        //move Edges
+        move_index(2,6,&Edges);
+        move_index(2,10,&Edges);
+        move_index(2,5,&Edges);
 
         //move corners
         //TODO
@@ -86,7 +107,7 @@ struct Cube {
 int main() {
 
 
-    // std::cout << sizeof(Cube) << std::endl;
+    std::cout << sizeof(Cube) << std::endl;
     //
     // std::cout <<std::bitset<60>(EdgesSolved) << std::endl;
     //
@@ -96,7 +117,7 @@ int main() {
     //
 
     Cube cube = Cube(EdgesSolved, CornersSolved);
-    cube.R();
+    cube.L();
     std::cout << std::bitset<60>(cube.Edges) << std::endl;
 
 
