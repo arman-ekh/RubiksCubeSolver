@@ -24,6 +24,12 @@ void move_index(int index_one, int index_two, uint64_t* num) {
     set_index(num, index_two, value_one);
 }
 
+void change_edge_state(int index , uint64_t* num) {
+    uint64_t mask = 0b10000;
+    mask = (mask << (index * 5));
+    *num = *num ^ mask;
+}
+
 
 
 struct Cube {
@@ -87,6 +93,11 @@ struct Cube {
         move_index(0,8,&Edges);
         move_index(0,4,&Edges);
 
+        change_edge_state(0,&Edges);
+        change_edge_state(7,&Edges);
+        change_edge_state(8,&Edges);
+        change_edge_state(4,&Edges);
+
         //move corners
         //TODO
     }
@@ -96,6 +107,11 @@ struct Cube {
         move_index(2,6,&Edges);
         move_index(2,10,&Edges);
         move_index(2,5,&Edges);
+
+        change_edge_state(2,&Edges);
+        change_edge_state(6,&Edges);
+        change_edge_state(5,&Edges);
+        change_edge_state(10,&Edges);
 
         //move corners
         //TODO
@@ -110,15 +126,16 @@ int main() {
     std::cout << sizeof(Cube) << std::endl;
     //
     // std::cout <<std::bitset<60>(EdgesSolved) << std::endl;
-    //
-    //
-    //
-    //
-    //
 
     Cube cube = Cube(EdgesSolved, CornersSolved);
-    cube.L();
+    cube.F();
+
+    change_edge_state(11,&cube.Edges);
+
     std::cout << std::bitset<60>(cube.Edges) << std::endl;
+
+
+
 
 
     return 0;
