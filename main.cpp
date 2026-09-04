@@ -51,9 +51,14 @@ struct Cube {
         move_index(3,0 , &Edges);
         move_index(3,2 , &Edges);
         move_index(2,1 , &Edges);
+        //U move does not affect state
 
 
         //move corners
+        move_index(0,1 , &Corners);
+        move_index(0,2 , &Corners);
+        move_index(0,3 , &Corners);
+        //change orientation state
         //TODO
     }
 
@@ -62,8 +67,13 @@ struct Cube {
         move_index(11,8,&Edges);
         move_index(11,9,&Edges);
         move_index(11,10,&Edges);
+        //D move does not affect state
 
         //move corners
+        move_index(4,5 , &Corners);
+        move_index(4,6 , &Corners);
+        move_index(4,7 , &Corners);
+        //change orientation state
         //TODO
     }
 
