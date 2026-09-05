@@ -51,7 +51,7 @@ struct Cube {
         move_index(3,0 , &Edges);
         move_index(3,2 , &Edges);
         move_index(2,1 , &Edges);
-        //U move does not affect state
+        //U move does not affect state of Edges
 
 
         //move corners
@@ -67,7 +67,7 @@ struct Cube {
         move_index(11,8,&Edges);
         move_index(11,9,&Edges);
         move_index(11,10,&Edges);
-        //D move does not affect state
+        //D move does not affect state of Edges
 
         //move corners
         move_index(4,5 , &Corners);
@@ -82,8 +82,13 @@ struct Cube {
         move_index(6,3,&Edges);
         move_index(11,3,&Edges);
         move_index(7,3,&Edges);
+        //R move does not affect state of Edges
 
         //move corners
+        move_index(2,6,&Corners);
+        move_index(2,7,&Corners);
+        move_index(2 , 3,&Corners);
+        //change orientation state
         //TODO
     }
 
@@ -94,6 +99,10 @@ struct Cube {
         move_index(1,5,&Edges);
 
         //move corners
+        move_index(0,4,&Corners);
+        move_index(0,5,&Corners);
+        move_index(0,1,&Corners);
+        //change orientation state
         //TODO
     }
 
@@ -109,6 +118,9 @@ struct Cube {
         change_edge_state(4,&Edges);
 
         //move corners
+        move_index(0,3,&Corners);
+        move_index(0,7,&Corners);
+        move_index(0,4,&Corners);
         //TODO
     }
 
@@ -124,6 +136,9 @@ struct Cube {
         change_edge_state(10,&Edges);
 
         //move corners
+        move_index(1,2,&Corners);
+        move_index(1,7,&Corners);
+        move_index(1,4,&Corners);
         //TODO
     }
 };
