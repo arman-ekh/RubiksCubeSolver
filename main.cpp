@@ -151,11 +151,14 @@ int main() {
     std::cout << sizeof(Cube) << std::endl;
 
     Cube cube = Cube(EdgesSolved, CornersSolved);
-    cube.F();
 
-    change_edge_state(11,&cube.Edges);
 
-    std::cout << std::bitset<60>(cube.Edges) << std::endl;
+    Cube cube2 = Cube(cube.Edges, cube.Corners);
+    cube2.D();
+
+
+
+    std::cout << std::bitset<60>(cube2.Edges) << std::endl;
 
 
 
