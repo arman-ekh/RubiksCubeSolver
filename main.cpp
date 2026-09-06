@@ -149,8 +149,6 @@ int main() {
 
 
     std::cout << sizeof(Cube) << std::endl;
-    //
-    // std::cout <<std::bitset<60>(EdgesSolved) << std::endl;
 
     Cube cube = Cube(EdgesSolved, CornersSolved);
     cube.F();
