@@ -151,6 +151,7 @@ int main() {
     std::cout << sizeof(Cube) << std::endl;
 
     Cube cube = Cube(EdgesSolved, CornersSolved);
+    cube.F();
 
 
     Cube cube2 = Cube(cube.Edges, cube.Corners);
