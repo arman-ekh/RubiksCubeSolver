@@ -30,6 +30,47 @@ void change_edge_state(int index , uint64_t* num) {
     *num = *num ^ mask;
 }
 
+uint64_t get_corner_state(uint64_t num, int index) {
+    return (num >> (index * 5 + 3)) & 0b11;
+}
+
+void set_corner_state(uint64_t* num, int index, uint64_t state) {
+    uint64_t mask = 0b11ULL << (index * 5 + 3);
+
+    *num &= ~mask;
+    *num |= state << (index * 5 + 3);
+}
+
+void change_corner_state_FB(int index, uint64_t* num) {
+    uint64_t state = get_corner_state(*num, index);
+
+    if (state == 0)
+        state = 2;
+    else if (state == 2)
+        state = 0;
+
+    set_corner_state(num, index, state);
+}
+
+void change_corner_state_LR(int index, uint64_t* num) {
+    uint64_t state = get_corner_state(*num, index);
+    if (state == 0) {
+        state = 1;
+    }else if (state == 1) {
+        state = 0;
+    }
+    set_corner_state(num, index, state);
+}
+
+void change_corner_state_TB(int index, uint64_t* num) {
+    uint64_t state = get_corner_state(*num, index);
+    if (state == 2) {
+        state = 1;
+    }else if (state == 1) {
+        state = 2;
+    }
+    set_corner_state(num, index, state);
+}
 
 
 struct Cube {
@@ -46,6 +87,8 @@ struct Cube {
         this->Corners = Corners;
     }
 
+
+
     void U() {
         //move Edges
         move_index(3,0 , &Edges);
@@ -58,8 +101,10 @@ struct Cube {
         move_index(0,1 , &Corners);
         move_index(0,2 , &Corners);
         move_index(0,3 , &Corners);
-        //change orientation state
-        //TODO
+        change_corner_state_TB(0,&Corners);
+        change_corner_state_TB(1,&Corners);
+        change_corner_state_TB(2,&Corners);
+        change_corner_state_TB(3,&Corners);
     }
 
     void D() {
@@ -74,7 +119,11 @@ struct Cube {
         move_index(4,6 , &Corners);
         move_index(4,7 , &Corners);
         //change orientation state
-        //TODO
+        change_corner_state_TB(4,&Corners);
+        change_corner_state_TB(5,&Corners);
+        change_corner_state_TB(6,&Corners);
+        change_corner_state_TB(7,&Corners);
+
     }
 
     void R() {
@@ -89,6 +138,9 @@ struct Cube {
         move_index(2,7,&Corners);
         move_index(2 , 3,&Corners);
         //change orientation state
+        // case 0 -> 1
+        // case 1 -> 0
+        // case 2 -> 2
         //TODO
     }
 
@@ -103,6 +155,9 @@ struct Cube {
         move_index(0,5,&Corners);
         move_index(0,1,&Corners);
         //change orientation state
+        // case 0 -> 1
+        // case 1 -> 0
+        // case 2 -> 2
         //TODO
     }
 
@@ -121,6 +176,9 @@ struct Cube {
         move_index(0,3,&Corners);
         move_index(0,7,&Corners);
         move_index(0,4,&Corners);
+        //case 0 -> 2
+        //case 2 -> 0
+        //case 1 -> 1
         //TODO
     }
 
@@ -139,6 +197,9 @@ struct Cube {
         move_index(1,2,&Corners);
         move_index(1,7,&Corners);
         move_index(1,4,&Corners);
+        //case 0 -> 2
+        //case 2 -> 0
+        //case 1 -> 1
         //TODO
     }
 };
@@ -151,17 +212,25 @@ int main() {
     std::cout << sizeof(Cube) << std::endl;
 
     Cube cube = Cube(EdgesSolved, CornersSolved);
-    cube.F();
-
-
-    Cube cube2 = Cube(cube.Edges, cube.Corners);
-    cube2.D();
 
 
 
-    std::cout << std::bitset<60>(cube2.Edges) << std::endl;
 
 
+
+
+    for (int i = 0; i < 8; i++) {
+        std::cout << std::bitset<5>((cube.Corners >> (i * 5))) << std::endl;
+    }
+
+
+    std::cout << std::bitset<40>(cube.Corners) << std::endl;
+
+    for (int i =0 ; i < 12 ; i++ ) {
+        std::cout << std::bitset<5>((cube.Edges >> (i * 5))) << std::endl;
+    }
+
+    std::cout << std::bitset<60>(cube.Edges) << std::endl;
 
 
 
