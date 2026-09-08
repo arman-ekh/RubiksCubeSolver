@@ -43,7 +43,9 @@ void set_corner_state(uint64_t* num, int index, uint64_t state) {
 
 void change_corner_state_FB(int index, uint64_t* num) {
     uint64_t state = get_corner_state(*num, index);
-
+    //case 0 -> 2
+    //case 2 -> 0
+    //case 1 -> 1
     if (state == 0)
         state = 2;
     else if (state == 2)
@@ -53,6 +55,9 @@ void change_corner_state_FB(int index, uint64_t* num) {
 }
 
 void change_corner_state_LR(int index, uint64_t* num) {
+    // case 0 -> 1
+    // case 1 -> 0
+    // case 2 -> 2
     uint64_t state = get_corner_state(*num, index);
     if (state == 0) {
         state = 1;
@@ -63,6 +68,9 @@ void change_corner_state_LR(int index, uint64_t* num) {
 }
 
 void change_corner_state_TB(int index, uint64_t* num) {
+    // case 0 -> 0
+    // case 1 -> 2
+    // case 2 -> 1
     uint64_t state = get_corner_state(*num, index);
     if (state == 2) {
         state = 1;
@@ -101,6 +109,8 @@ struct Cube {
         move_index(0,1 , &Corners);
         move_index(0,2 , &Corners);
         move_index(0,3 , &Corners);
+
+        //change orientation state
         change_corner_state_TB(0,&Corners);
         change_corner_state_TB(1,&Corners);
         change_corner_state_TB(2,&Corners);
@@ -118,6 +128,7 @@ struct Cube {
         move_index(4,5 , &Corners);
         move_index(4,6 , &Corners);
         move_index(4,7 , &Corners);
+
         //change orientation state
         change_corner_state_TB(4,&Corners);
         change_corner_state_TB(5,&Corners);
@@ -137,11 +148,12 @@ struct Cube {
         move_index(2,6,&Corners);
         move_index(2,7,&Corners);
         move_index(2 , 3,&Corners);
+
         //change orientation state
-        // case 0 -> 1
-        // case 1 -> 0
-        // case 2 -> 2
-        //TODO
+        change_corner_state_LR(2,&Corners);
+        change_corner_state_LR(3,&Corners);
+        change_corner_state_LR(6,&Corners);
+        change_corner_state_LR(7,&Corners);
     }
 
     void L() {
@@ -154,11 +166,12 @@ struct Cube {
         move_index(0,4,&Corners);
         move_index(0,5,&Corners);
         move_index(0,1,&Corners);
+
         //change orientation state
-        // case 0 -> 1
-        // case 1 -> 0
-        // case 2 -> 2
-        //TODO
+        change_corner_state_LR(2,&Corners);
+        change_corner_state_LR(3,&Corners);
+        change_corner_state_LR(6,&Corners);
+        change_corner_state_LR(7,&Corners);
     }
 
     void F() {
@@ -176,10 +189,12 @@ struct Cube {
         move_index(0,3,&Corners);
         move_index(0,7,&Corners);
         move_index(0,4,&Corners);
-        //case 0 -> 2
-        //case 2 -> 0
-        //case 1 -> 1
-        //TODO
+
+        //change orientation state
+        change_corner_state_FB(0,&Corners);
+        change_corner_state_FB(3,&Corners);
+        change_corner_state_FB(4,&Corners);
+        change_corner_state_FB(7,&Corners);
     }
 
     void B() {
@@ -197,10 +212,12 @@ struct Cube {
         move_index(1,2,&Corners);
         move_index(1,7,&Corners);
         move_index(1,4,&Corners);
-        //case 0 -> 2
-        //case 2 -> 0
-        //case 1 -> 1
-        //TODO
+
+        //change orientation state
+        change_corner_state_FB(1,&Corners);
+        change_corner_state_FB(2,&Corners);
+        change_corner_state_FB(4,&Corners);
+        change_corner_state_FB(7,&Corners);
     }
 };
 
