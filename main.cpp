@@ -1,7 +1,6 @@
-#include <bitset>
-#include <cstdint>
 #include <iostream>
 
+#include "include/BFS.h"
 #include "include/Cube.h"
 
 
@@ -9,20 +8,26 @@
 int main() {
     std::cout << sizeof(Cube) << std::endl;
 
-    Cube cube = Cube(EdgesSolved, CornersSolved);
 
-    for (int i = 0; i < 8; i++) {
-        std::cout << std::bitset<5>((cube.Corners >> (i * 5))) << std::endl;
-    }
+    Cube cube(EdgesSolved, CornersSolved);
+
+    cube.F();
+    cube.B();
+    // cube.F();
+    // cube.R();
+    // cube.L();
+    // cube.B();
+
+    BFS bfs;
+    bfs.initialize(cube);
 
 
-    std::cout << std::bitset<40>(cube.Corners) << std::endl;
+        bfs.step();
 
-    for (int i =0 ; i < 12 ; i++ ) {
-        std::cout << std::bitset<5>((cube.Edges >> (i * 5))) << std::endl;
-    }
 
-    std::cout << std::bitset<60>(cube.Edges) << std::endl;
+    std::cout << bfs.is_found() << '\n';
+
+
 
 
 
