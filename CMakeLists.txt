@@ -3,4 +3,7 @@ project(RubiksCubeSolver)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(RubiksCubeSolver main.cpp)
+add_executable(RubiksCubeSolver main.cpp
+        src/BFS.cpp
+        include/BFS.h
+        include/Cube.h)
