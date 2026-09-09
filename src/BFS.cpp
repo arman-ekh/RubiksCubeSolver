@@ -1,128 +1,183 @@
 #include "../include/BFS.h"
+#include <vector>
+#include <omp.h>
 
-#include <iostream>
+
+inline int get_face(uint8_t move) {
+    if (move == NONE) return -1;
+    return (move - 1) / 3;
+}
+
+
+inline bool should_prune(uint8_t last_move, uint8_t next_move) {
+    if (last_move == NONE) return false;
+
+    int last_face = get_face(last_move);
+    int next_face = get_face(next_move);
+
+    if (last_face == next_face) return true;
+
+
+    if ((last_face == 0 && next_face == 1) ||
+        (last_face == 2 && next_face == 3) ||
+        (last_face == 4 && next_face == 5)) {
+        return true;
+    }
+
+    return false;
+}
+
+inline void apply_move(Cube& cube, uint8_t move) {
+    switch (move) {
+        case U1: cube.U(); break;
+        case U2: cube.U(); cube.U(); break;
+        case U3: cube.U(); cube.U(); cube.U(); break;
+
+        case D1: cube.D(); break;
+        case D2: cube.D(); cube.D(); break;
+        case D3: cube.D(); cube.D(); cube.D(); break;
+
+        case R1: cube.R(); break;
+        case R2: cube.R(); cube.R(); break;
+        case R3: cube.R(); cube.R(); cube.R(); break;
+
+        case L1: cube.L(); break;
+        case L2: cube.L(); cube.L(); break;
+        case L3: cube.L(); cube.L(); cube.L(); break;
+
+        case F1: cube.F(); break;
+        case F2: cube.F(); cube.F(); break;
+        case F3: cube.F(); cube.F(); cube.F(); break;
+
+        case B1: cube.B(); break;
+        case B2: cube.B(); cube.B(); break;
+        case B3: cube.B(); cube.B(); cube.B(); break;
+        default: break;
+    }
+}
 
 void BFS::initialize(Cube cube) {
+    while (!queue.empty()) queue.pop();
+    visited.clear();
+
+    cube.setLastMove(NONE);
     queue.push(cube);
+    visited.insert(cube);
     found = false;
 }
 
 bool BFS::is_finished() {
-    if (queue.empty() || found) {
-        return true;
-    }else {
-        return false;
-    }
+    return queue.empty() || found;
 }
 
 bool BFS::is_found() {
     return found;
 }
 
+
 void BFS::step() {
-    for (int i =0; i < queue.size(); i++) {
-        std::cout << queue.size() << "\n";
-        Cube cube = queue.front();
-        if (cube.isSolved() ) {
+    size_t level_size = queue.size();
+
+    for (size_t i = 0; i < level_size; ++i) {
+        Cube current = queue.front();
+        queue.pop();
+
+        if (current.isSolved()) {
             found = true;
             return;
         }
 
-        queue.pop();
-        if (set.contains(cube)) {
-            continue;
+        uint8_t last_move = current.getLastMove();
+
+        for (uint8_t m = U1; m <= B3; ++m) {
+            if (should_prune(last_move, m)) continue;
+
+            Cube next_cube = current;
+            apply_move(next_cube, m);
+            next_cube.setLastMove(m);
+
+            if (!visited.contains(next_cube)) {
+                if (next_cube.isSolved()) {
+                    found = true;
+                    return;
+                }
+                visited.insert(next_cube);
+                queue.push(next_cube);
+            }
         }
-        set.insert(cube);
-        Cube cube1 = Cube(cube.Edges , cube.Corners);
-        cube1.U();
-        queue.push(cube1);
+    }
+}
 
-        Cube cube2 = Cube(cube.Edges , cube.Corners);
-        cube2.U();
-        cube2.U();
-        queue.push(cube2);
+void BFS::step_parallel() {
+    size_t level_size = queue.size();
+    if (level_size == 0 || found) return;
 
-        Cube cube3 = Cube(cube.Edges , cube.Corners);
-        cube3.U();
-        cube3.U();
-        cube3.U();
-        queue.push(cube3);
+    std::vector<Cube> current_level;
+    current_level.reserve(level_size);
+    while (!queue.empty()) {
+        current_level.push_back(queue.front());
+        queue.pop();
+    }
 
-        Cube cube4 = Cube(cube.Edges , cube.Corners);
-        cube4.D();
-        queue.push(cube4);
+    std::vector<Cube> next_level_nodes;
+    bool global_found = false;
 
-        Cube cube5 = Cube(cube.Edges , cube.Corners);
-        cube5.D();
-        cube5.D();
-        queue.push(cube5);
+    #pragma omp parallel
+    {
+        std::vector<Cube> local_next;
 
+        #pragma omp for schedule(dynamic)
+        for (size_t i = 0; i < current_level.size(); ++i) {
+            if (global_found) continue;
 
-        Cube cube6 = Cube(cube.Edges , cube.Corners);
-        cube6.D();
-        cube6.D();
-        cube6.D();
-        queue.push(cube6);
+            Cube current = current_level[i];
 
-        Cube cube7 = Cube(cube.Edges , cube.Corners);
-        cube7.R();
-        queue.push(cube7);
+            if (current.isSolved()) {
+                #pragma omp atomic write
+                global_found = true;
+                continue;
+            }
 
-        Cube cube8 = Cube(cube.Edges , cube.Corners);
-        cube8.R();
-        cube8.R();
-        queue.push(cube8);
+            uint8_t last_move = current.getLastMove();
 
+            for (uint8_t m = U1; m <= B3; ++m) {
+                if (should_prune(last_move, m)) continue;
 
-        Cube cube9 = Cube(cube.Edges , cube.Corners);
-        cube9.R();
-        cube9.R();
-        cube9.R();
-        queue.push(cube9);
+                Cube next_cube = current;
+                apply_move(next_cube, m);
+                next_cube.setLastMove(m);
 
-        Cube cube10 = Cube(cube.Edges , cube.Corners);
-        cube10.L();
-        queue.push(cube10);
+                bool is_new = false;
+                #pragma omp critical(visited_lock)
+                {
+                    if (!visited.contains(next_cube)) {
+                        visited.insert(next_cube);
+                        is_new = true;
+                    }
+                }
 
-        Cube cube11 = Cube(cube.Edges , cube.Corners);
-        cube11.L();
-        cube11.L();
-        queue.push(cube11);
+                if (is_new) {
+                    if (next_cube.isSolved()) {
+                        #pragma omp atomic write
+                        global_found = true;
+                    }
+                    local_next.push_back(next_cube);
+                }
+            }
+        }
 
-        Cube cube12 = Cube(cube.Edges , cube.Corners);
-        cube12.L();
-        cube12.L();
-        cube12.L();
-        queue.push(cube12);
+        #pragma omp critical(queue_merge_lock)
+        {
+            next_level_nodes.insert(next_level_nodes.end(), local_next.begin(), local_next.end());
+        }
+    }
 
-        Cube cube13 = Cube(cube.Edges , cube.Corners);
-        cube13.F();
-        queue.push(cube13);
+    if (global_found) {
+        found = true;
+        return;
+    }
 
-        Cube cube14 = Cube(cube.Edges , cube.Corners);
-        cube14.F();
-        cube14.F();
-        queue.push(cube14);
-
-        Cube cube15 = Cube(cube.Edges , cube.Corners);
-        cube15.F();
-        cube15.F();
-        cube15.F();
-        queue.push(cube15);
-
-        Cube cube16 = Cube(cube.Edges , cube.Corners);
-        cube16.B();
-        queue.push(cube16);
-
-        Cube cube17 = Cube(cube.Edges , cube.Corners);
-        cube17.B();
-        cube17.B();
-        queue.push(cube17);
-
-        Cube cube18 = Cube(cube.Edges , cube.Corners);
-        cube18.B();
-        cube18.B();
-        cube18.B();
-        queue.push(cube18);
+    for (const auto& cube : next_level_nodes) {
+        queue.push(cube);
     }
 }
