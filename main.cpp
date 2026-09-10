@@ -15,8 +15,8 @@ int main() {
     cube.R();
     cube.U();
     cube.D();
-    // cube.L();
-    cube.F();
+    cube.L();
+    // cube.F();
     DFS dfs = DFS();
 
     auto start_time = std::chrono::high_resolution_clock::now();
