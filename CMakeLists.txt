@@ -7,9 +7,9 @@ find_package(OpenMP REQUIRED)
 
 add_executable(RubiksCubeSolver
         main.cpp
-        src/BFS.cpp
-        include/BFS.h
         include/Cube.h
+        src/DFS.cpp
+        src/DFS.h
 )
 
 target_include_directories(RubiksCubeSolver PRIVATE include)
