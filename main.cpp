@@ -10,7 +10,7 @@ int main() {
 
     Cube cube(EdgesSolved, CornersSolved);
 
-    cube.F();
+    cube.F3();
     cube.B();
     cube.R();
     cube.U();
@@ -21,17 +21,20 @@ int main() {
     cube.U2();
     cube.R();
     cube.U();
-    DFS dfs = DFS();
+
+    std::atomic<long int> total_nodes{0};
+    int target_depth = 8;
 
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    dfs.Search(cube , 8 ,NONE);
+    bool solved = DFS::ParallelSearch(cube, target_depth, total_nodes);
 
     auto end_time = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> duration = end_time - start_time;
 
-    std::cout << dfs.getNodeCount() << std::endl;
-    std::cout << "Time taken: " << duration.count() << " seconds." << std::endl;
+    std::cout << "Is Solved: " << (solved ? "Yes" : "No") << std::endl;
+    std::cout << "Total Nodes Evaluated: " << total_nodes.load() << std::endl;
+    std::cout << "Time Elapsed: " << duration.count() << " seconds" << std::endl;
 
     return 0;
 }

@@ -1,5 +1,7 @@
 #ifndef RUBIKSCUBESOLVER_DFS_H
 #define RUBIKSCUBESOLVER_DFS_H
+#include <atomic>
+
 #include "Cube.h"
 
 
@@ -37,8 +39,12 @@ class DFS {
     public:
         DFS();
         static void initPruneTable();
-        void Search(Cube& cube, int depth, uint8_t last_move);
+        void Search(Cube cube, int depth, uint8_t last_move, const std::atomic<bool>& global_solved);
+        static bool ParallelSearch(const Cube& start_cube, int depth, std::atomic<long int>& global_node_count);
         long int getNodeCount();
+        bool getIsSolved() {
+            return isSolved;
+        };
 };
 
 
