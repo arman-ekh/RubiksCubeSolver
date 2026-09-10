@@ -1,200 +1,73 @@
 #include "DFS.h"
 
-#include <algorithm>
+bool DFS::PRUNE_TABLE[19][19];
+bool DFS::isTableInitialized = false;
+
+void DFS::initPruneTable() {
+    if (isTableInitialized) return;
+
+    for (uint8_t last = 0; last <= 18; ++last) {
+        for (uint8_t next = 0; next <= 18; ++next) {
+            PRUNE_TABLE[last][next] = calc_should_prune(last, next);
+        }
+    }
+    isTableInitialized = true;
+}
 
 DFS::DFS() {
     nodeCount = 0;
     isSolved = false;
+    initPruneTable();
 }
-
-inline int get_face(uint8_t move) {
-    if (move == NONE) return -1;
-    return (move - 1) / 3;
-}
-
-inline uint8_t inverse_move(uint8_t move) {
-    if (move == NONE) return NONE;
-
-    if (move % 3 == 1)
-        return move + 2;
-
-    if (move % 3 == 2)
-        return move;
-
-    return move - 2;
-}
-
-inline bool should_prune(uint8_t last_move, uint8_t next_move) {
-    if (last_move == NONE) return false;
-
-    int last_face = get_face(last_move);
-    int next_face = get_face(next_move);
-
-    if (last_face == next_face) return true;
-
-
-    if ((last_face == 0 && next_face == 1) ||
-        (last_face == 2 && next_face == 3) ||
-        (last_face == 4 && next_face == 5)) {
-        return true;
-        }
-
-    return false;
-}
-
-inline void apply_move(Cube& cube, uint8_t move) {
-    switch (move) {
-        case U1: cube.U(); break;
-        case U2: cube.U2(); break;
-        case U3: cube.U3(); break;
-
-        case D1: cube.D(); break;
-        case D2: cube.D2(); break;
-        case D3: cube.D3(); break;
-
-        case R1: cube.R(); break;
-        case R2: cube.R2(); break;
-        case R3: cube.R3(); break;
-
-        case L1: cube.L(); break;
-        case L2: cube.L2(); break;
-        case L3: cube.L3(); break;
-
-        case F1: cube.F(); break;
-        case F2: cube.F2(); break;
-        case F3: cube.F3();  break;
-
-        case B1: cube.B(); break;
-        case B2: cube.B2(); break;
-        case B3: cube.B3(); break;
-        default: break;
-    }
-}
-
-
 
 void DFS::Search(Cube& cube, int depth, uint8_t last_move) {
     ++nodeCount;
 
     if (cube.isSolved()) {
         isSolved = true;
-        // return;
-    }
-
-    if (depth == 0)
         return;
-
-
-    if (!should_prune(last_move , U1)) {
-        cube.U();
-        Search(cube, depth-1, U1);
-        cube.U3();
-    }
-    if (!should_prune(last_move , U2)) {
-        cube.U2();
-        Search(cube, depth-1, U2);
-        cube.U2();
-    }
-    if (!should_prune(last_move , U3)) {
-        cube.U3();
-        Search(cube, depth-1, U3);
-        cube.U();
     }
 
-    if (!should_prune(last_move , D1)) {
-        cube.D();
-        Search(cube, depth-1, D1);
-        cube.D3();
-    }
-    if (!should_prune(last_move , D2)) {
-        cube.D2();
-        Search(cube, depth-1, D2);
-        cube.D2();
-    }
-    if (!should_prune(last_move , D3)) {
-        cube.D3();
-        Search(cube, depth-1, D3);
-        cube.D();
-    }
+    if (depth == 0) return;
 
-    if (!should_prune(last_move , F1)) {
-        cube.F();
-        Search(cube, depth-1, F1);
-        cube.F3();
-    }
-    if (!should_prune(last_move , F2)) {
-        cube.F2();
-        Search(cube, depth-1, F2);
-        cube.F2();
-    }
-    if (!should_prune(last_move , F3)) {
-        cube.F3();
-        Search(cube, depth-1, F3);
-        cube.F();
-    }
 
-    if (!should_prune(last_move , B1)) {
-        cube.B();
-        Search(cube, depth-1, B1);
-        cube.B3();
-    }
-    if (!should_prune(last_move , B2)) {
-        cube.B2();
-        Search(cube, depth-1, B2);
-        cube.B2();
-    }
-    if (!should_prune(last_move , B3)) {
-        cube.B3();
-        Search(cube, depth-1, B3);
-        cube.B();
-    }
-    if (!should_prune(last_move , L1)) {
-        cube.L();
-        Search(cube, depth-1, L1);
-        cube.L3();
-    }
-    if (!should_prune(last_move , L2)) {
-        cube.L2();
-        Search(cube, depth-1, L2);
-        cube.L2();
-    }
-    if (!should_prune(last_move , L3)) {
-        cube.L3();
-        Search(cube, depth-1, L3);
-        cube.L();
-    }
+    #define TRY_MOVE(MOVE, DO_MOVE, UNDO_MOVE)          \
+        if (!PRUNE_TABLE[last_move][MOVE]) {             \
+            DO_MOVE;                                     \
+            Search(cube, depth - 1, MOVE);               \
+            UNDO_MOVE;                                   \
+            if (isSolved) return;                        \
+        }
 
-    if (!should_prune(last_move , R1)) {
-        cube.R();
-        Search(cube, depth-1, R1);
-        cube.R3();
-    }
-    if (!should_prune(last_move , R2)) {
-        cube.R2();
-        Search(cube, depth-1, R2);
-        cube.R2();
-    }
-    if (!should_prune(last_move , R3)) {
-        cube.R3();
-        Search(cube, depth-1, R3);
-        cube.R();
-    }
 
-    // for (uint8_t move = U1; move <= B3; ++move) {
-    //     if (should_prune(last_move, move))
-    //         continue;
-    //
-    //     apply_move(cube, move);
-    //
-    //     Search(cube, depth - 1, move);
-    //
-    //     apply_move(cube, inverse_move(move));
-    //
-    //     // if (isSolved)
-    //     //     return;
-    // }
+    TRY_MOVE(U1, cube.U(),  cube.U3())
+    TRY_MOVE(U2, cube.U2(), cube.U2())
+    TRY_MOVE(U3, cube.U3(), cube.U())
+
+
+    TRY_MOVE(D1, cube.D(),  cube.D3())
+    TRY_MOVE(D2, cube.D2(), cube.D2())
+    TRY_MOVE(D3, cube.D3(), cube.D())
+
+
+    TRY_MOVE(F1, cube.F(),  cube.F3())
+    TRY_MOVE(F2, cube.F2(), cube.F2())
+    TRY_MOVE(F3, cube.F3(), cube.F())
+
+    TRY_MOVE(B1, cube.B(),  cube.B3())
+    TRY_MOVE(B2, cube.B2(), cube.B2())
+    TRY_MOVE(B3, cube.B3(), cube.B())
+
+    TRY_MOVE(L1, cube.L(),  cube.L3())
+    TRY_MOVE(L2, cube.L2(), cube.L2())
+    TRY_MOVE(L3, cube.L3(), cube.L())
+
+    TRY_MOVE(R1, cube.R(),  cube.R3())
+    TRY_MOVE(R2, cube.R2(), cube.R2())
+    TRY_MOVE(R3, cube.R3(), cube.R())
+
+    #undef TRY_MOVE
 }
-
 
 long int DFS::getNodeCount() {
     return nodeCount;
