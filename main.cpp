@@ -21,6 +21,7 @@ int main() {
     cube.U2();
     cube.R();
     cube.U();
+    cube.B3();
 
     std::atomic<long int> total_nodes{0};
     int target_depth = 8;
