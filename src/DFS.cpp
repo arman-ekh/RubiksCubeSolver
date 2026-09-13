@@ -1,4 +1,4 @@
-#include "DFS.h"
+#include "../include/DFS.h"
 
 #include <future>
 #include <vector>

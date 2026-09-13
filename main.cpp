@@ -3,7 +3,7 @@
 
 
 #include "include/Cube.h"
-#include "src/DFS.h"
+#include "include/DFS.h"
 
 int main() {
 
