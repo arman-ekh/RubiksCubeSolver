@@ -10,8 +10,8 @@ add_executable(RubiksCubeSolver
         include/Cube.h
         src/DFS.cpp
         include/DFS.h
-        src/IDA_star.cpp
-        include/IDA_star.h
+        src/Greedy.cpp
+        include/Greedy.h
 )
 
 target_include_directories(RubiksCubeSolver PRIVATE include)
