@@ -12,6 +12,7 @@ add_executable(RubiksCubeSolver
         include/DFS.h
         src/Greedy.cpp
         include/Greedy.h
+        include/Result.h
 )
 
 target_include_directories(RubiksCubeSolver PRIVATE include)
