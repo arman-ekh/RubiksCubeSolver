@@ -56,7 +56,7 @@ public:
     Result search(Cube cube,int depth,uint8_t last_move, std::atomic<bool>& global_solved,int eval);
     bool isSolved();
     static void initPruneTable();
-    static Result ParallelSearch(const Cube& start_cube,std::atomic<bool>& global_solved,std::atomic<long int>& global_node_count);
+    static Result ParallelSearch(const Cube& start_cube,std::atomic<bool>& global_solved,std::atomic<unsigned long int>& global_node_count);
     long int getNodeCount() {
         return node_count;
     };

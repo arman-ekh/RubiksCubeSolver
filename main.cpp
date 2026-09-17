@@ -75,9 +75,11 @@ int main() {
 
     scrambleCube(cube);
 
-    std::atomic<long int> total_nodes{0};
+    std::atomic<unsigned long int> total_nodes{0};
     std::atomic<bool> atomic_solved{false};
     int target_depth = 8;
+
+
 
     auto start_time = std::chrono::high_resolution_clock::now();
 

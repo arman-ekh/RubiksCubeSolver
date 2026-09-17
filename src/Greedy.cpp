@@ -91,7 +91,7 @@ Result Greedy::search(
                 return result;                                             \
             }                                                               \
                                                                             \
-            if (next_eval >= eval - 3000) {                                        \
+            if (next_eval >= eval - 6000) {                                        \
                 Result result = search(                                    \
                     next_cube,                                             \
                     depth - 1,                                             \
@@ -175,7 +175,7 @@ const inline char* move_name(uint8_t move) {
 Result Greedy::ParallelSearch(
     const Cube& start_cube,
     std::atomic<bool>& global_solved,
-    std::atomic<long int>& global_node_count
+    std::atomic<unsigned long int>& global_node_count
 ) {
     if (start_cube.isSolved()) {
         global_node_count.fetch_add(1, std::memory_order_relaxed);
@@ -251,7 +251,7 @@ Result Greedy::ParallelSearch(
 
                     Result result = local_greedy.search(
                         branch_cube,
-                        8,
+                        7,
                         move,
                         global_solved,
                         initial_eval
