@@ -38,7 +38,7 @@ const inline char* move_name(uint8_t move) {
         default: return "?";
     }
 }
-void scrambleCube(Cube& cube, int moveCount = 10) {
+void scrambleCube(Cube& cube, int moveCount = 40) {
 
     std::mt19937 rng(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count()));
     std::uniform_int_distribution<int> dist(1, 18);
@@ -85,9 +85,6 @@ int main() {
 
     auto end_time = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> duration = end_time - start_time;
-    for (uint8_t move : result.moves) {
-        std::cout << move_name(move) << ' ';
-    }
     std::cout << "Is Solved: " << (result.solved ? "Yes" : "No") << std::endl;
     std::cout << "Total Nodes Evaluated: " << total_nodes.load() << std::endl;
     std::cout << "Time Elapsed: " << duration.count() << " seconds" << std::endl;
