@@ -5,6 +5,7 @@
 
 
 #include "Greedy.h"
+#include "IDA.h"
 #include "include/Cube.h"
 #include "include/DFS.h"
 
@@ -80,16 +81,34 @@ int main() {
     std::atomic<bool> atomic_solved{false};
     int target_depth = 8;
 
-
+    IDA solver;
+    std::atomic<unsigned long int> global_nodes{0};
 
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    Result result = Greedy::ParallelSearch(cube, atomic_solved, total_nodes);
+
+    std::vector<uint8_t> solution_path = solver.ParallelSearch(cube, global_nodes);
+
+    // Result result = Greedy::ParallelSearch(cube, atomic_solved, total_nodes);
 
     auto end_time = std::chrono::high_resolution_clock::now();
+
+    if (solver.getIsSolved()) {
+        std::cout << "Cube Solved Successfully!\n";
+        std::cout << "Total Moves: " << solution_path.size() << "\n";
+        std::cout << "Nodes Evaluated: " << global_nodes.load() << "\n\n";
+
+        std::cout << "Solution Path:\n";
+        for (uint8_t m : solution_path) {
+            std::cout << move_name(m) << " ";
+        }
+        std::cout << "\n";
+    } else {
+        std::cout << "Failed to solve the cube.\n";
+    }
+
+
     std::chrono::duration<double> duration = end_time - start_time;
-    std::cout << "Is Solved: " << (result.solved ? "Yes" : "No") << std::endl;
-    std::cout << "Total Nodes Evaluated: " << total_nodes.load() << std::endl;
     std::cout << "Time Elapsed: " << duration.count() << " seconds" << std::endl;
 
     return 0;

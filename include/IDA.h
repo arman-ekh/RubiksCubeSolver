@@ -3,13 +3,18 @@
 #include <atomic>
 
 #include "Cube.h"
+#include <cstdint>
+#include <vector>
 
-
-
+struct SubGoal {
+    uint64_t edge_mask;
+    uint64_t corner_mask;
+};
 
 struct IDAResult {
     bool solved;
     int next_threshold;
+    std::vector<uint8_t> path;
 };
 
 class IDA {
@@ -46,8 +51,8 @@ private:
 public:
     IDA();
     static void initPruneTable();
-    static bool ParallelSearch(const Cube &start_cube, std::atomic<unsigned long int> &global_node_count);
-    IDAResult Search(Cube cube, int g, int threshold, uint8_t last_move,std::atomic<bool>& global_solved);
+    std::vector<uint8_t> ParallelSearch(const Cube &start_cube, std::atomic<unsigned long int> &global_node_count);
+    IDAResult Search(Cube cube, int g, int threshold, uint8_t last_move, std::atomic<bool>& global_solved, const SubGoal& phase);
     unsigned long int getNodeCount();
     bool getIsSolved();
 };
