@@ -1,3 +1,4 @@
+#include <bitset>
 #include <iostream>
 #include <chrono>
 #include <random>
@@ -38,7 +39,7 @@ const inline char* move_name(uint8_t move) {
         default: return "?";
     }
 }
-void scrambleCube(Cube& cube, int moveCount = 40) {
+void scrambleCube(Cube& cube, int moveCount = 12) {
 
     std::mt19937 rng(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count()));
     std::uniform_int_distribution<int> dist(1, 18);
