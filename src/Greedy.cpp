@@ -92,7 +92,7 @@ Result Greedy::search(
                 return result;                                             \
             }                                                               \
                                                                             \
-            if (next_eval >= eval - 6000) {                                        \
+            if (next_eval >= eval -6000) {                                  \
                 Result result = search(                                    \
                     next_cube,                                             \
                     depth - 1,                                             \
