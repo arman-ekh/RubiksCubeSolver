@@ -5,7 +5,6 @@
 
 
 #include "Greedy.h"
-#include "IDA.h"
 #include "include/Cube.h"
 #include "include/DFS.h"
 
@@ -40,7 +39,7 @@ const inline char* move_name(uint8_t move) {
         default: return "?";
     }
 }
-void scrambleCube(Cube& cube, int moveCount = 12) {
+void scrambleCube(Cube& cube, int moveCount = 400) {
 
     std::mt19937 rng(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count()));
     std::uniform_int_distribution<int> dist(1, 18);
@@ -81,34 +80,16 @@ int main() {
     std::atomic<bool> atomic_solved{false};
     int target_depth = 8;
 
-    IDA solver;
-    std::atomic<unsigned long int> global_nodes{0};
+
 
     auto start_time = std::chrono::high_resolution_clock::now();
 
-
-    std::vector<uint8_t> solution_path = solver.ParallelSearch(cube, global_nodes);
-
-    // Result result = Greedy::ParallelSearch(cube, atomic_solved, total_nodes);
+    Result result = Greedy::ParallelSearch(cube, atomic_solved, total_nodes);
 
     auto end_time = std::chrono::high_resolution_clock::now();
-
-    if (solver.getIsSolved()) {
-        std::cout << "Cube Solved Successfully!\n";
-        std::cout << "Total Moves: " << solution_path.size() << "\n";
-        std::cout << "Nodes Evaluated: " << global_nodes.load() << "\n\n";
-
-        std::cout << "Solution Path:\n";
-        for (uint8_t m : solution_path) {
-            std::cout << move_name(m) << " ";
-        }
-        std::cout << "\n";
-    } else {
-        std::cout << "Failed to solve the cube.\n";
-    }
-
-
     std::chrono::duration<double> duration = end_time - start_time;
+    std::cout << "Is Solved: " << (result.solved ? "Yes" : "No") << std::endl;
+    std::cout << "Total Nodes Evaluated: " << total_nodes.load() << std::endl;
     std::cout << "Time Elapsed: " << duration.count() << " seconds" << std::endl;
 
     return 0;

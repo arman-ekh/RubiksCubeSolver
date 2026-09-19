@@ -1,6 +1,7 @@
 #include "Greedy.h"
 
 #include <array>
+#include <bitset>
 #include <future>
 #include <iostream>
 #include <vector>
@@ -308,6 +309,8 @@ Result Greedy::ParallelSearch(
 
     if (best_result.score <= start_score) {
         std::cout << "No improvement found.\n";
+        std::cout << "cube edges:   " << std::bitset<60>(best_result.cube.Edges) << std::endl;
+        std::cout << "cube corners: " << std::bitset<40>(best_result.cube.Corners) << std::endl;
         return best_result;
     }
 
